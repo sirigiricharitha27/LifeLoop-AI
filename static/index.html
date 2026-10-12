@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LifeLoop - Care, with context</title>
+<style>
+:root{--bg:#f6f6f2;--side:#fff;--card:#fff;--ink:#1c2a2b;--mute:#76858a;--line:#e6e8e2;--green:#3f6b57;--green2:#2f5545;--mint:#e7efe8;--sand:#f2eadc;--sandtx:#6b5a3a;--lav:#ede9f6;--lavtx:#6a5a9c;--amber:#f6ead3;--ambtx:#9a6b1f;--red:#b5483a;--redbg:#f9e6e2;--shadow:0 1px 2px rgba(30,45,40,.05),0 6px 20px rgba(30,45,40,.04)}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100%}
+aside{background:var(--side);border-right:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column;gap:14px;position:sticky;top:0;height:100vh}
+.brand{display:flex;gap:10px;align-items:center;padding:2px 6px}.logo{width:40px;height:40px;border-radius:11px;background:var(--green);color:#fff;display:grid;place-items:center;font-size:22px}
+.brand b{font-size:19px;letter-spacing:-.01em;display:block;line-height:1.1}.brand small{font-size:10.5px;letter-spacing:.14em;color:var(--mute);text-transform:uppercase}
+.resident{display:flex;gap:10px;align-items:center;padding:12px 6px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.av{width:36px;height:36px;border-radius:50%;background:var(--mint);color:var(--green2);display:grid;place-items:center;font-weight:600;flex:none}.av.sand{background:var(--sand);color:var(--sandtx)}
+.resident b{display:block;font-size:14px}.resident small{color:var(--mute);font-size:12px;line-height:1.2;display:block}.dot{width:8px;height:8px;border-radius:50%;background:#6c9a80;margin-left:auto;flex:none}
+nav{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:500;cursor:pointer}
+nav a:hover{background:#f3f6f3}nav a.on{background:var(--mint);font-weight:600}nav a i{font-style:normal;width:18px;text-align:center;color:var(--green)}
+.count{margin-left:auto;background:var(--mint);border-radius:99px;min-width:24px;text-align:center;font-size:12px;padding:1px 8px;font-weight:600}.count.hot{background:var(--amber);color:var(--ambtx)}
+.humanled{margin-top:auto;background:#eff4f0;border-radius:14px;padding:14px}.humanled b{display:block;margin-bottom:4px}.humanled p{margin:0 0 10px;color:var(--mute)}
+.pill{display:inline-block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--green2);background:var(--mint);border-radius:7px;padding:3px 8px}
+.main{padding:26px 36px 40px;max-width:1280px;width:100%}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}
+.eyebrow{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:600}
+h1{font-size:34px;letter-spacing:-.02em;margin:4px 0 2px;line-height:1.15}.sub{color:var(--mute)}
+.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.status{font-size:12px;color:var(--mute)}.status.bad{color:var(--red)}
+.iconbtn{width:40px;height:40px;border-radius:11px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:18px;color:var(--ink)}
+.sosbtn{border:1px solid var(--red);color:var(--red);background:#fff;border-radius:11px;padding:8px 14px;font-weight:600;cursor:pointer}.sosbtn:hover{background:var(--redbg)}
+.banner{display:flex;gap:10px;align-items:center;background:var(--sand);color:var(--sandtx);border:1px solid #eadfca;border-radius:12px;padding:12px 16px;margin-bottom:22px;font-size:13.5px}.banner b{color:#4d3f22}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:18px}.g2{grid-template-columns:1.55fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g2b{grid-template-columns:1.25fr 1fr}.g2c{grid-template-columns:1.4fr 1fr}
+@media(max-width:1100px){.g2,.g3,.g2b,.g2c{grid-template-columns:1fr}}
+@media(max-width:820px){.app{grid-template-columns:1fr}aside{position:static;height:auto}.main{padding:18px}}
+.hero{background:var(--mint);border-color:#dbe8de;min-height:250px;display:flex;flex-direction:column;justify-content:space-between}
+.hero h2{font-size:40px;line-height:1.1;letter-spacing:-.025em;color:var(--green2);margin:10px 0;max-width:420px}.hero p{color:var(--mute);max-width:380px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px 12px;font-size:12px}
+h2,h3{margin:0;letter-spacing:-.01em}h2.t{font-size:21px}.label{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--mute);font-weight:600;display:block;margin-bottom:6px}
+.quote{background:#f6f6f2;border-radius:12px;padding:16px 18px;margin:16px 0 8px;font-size:15px}.note{font-size:12px;color:var(--mute)}
+.btn{display:inline-flex;gap:8px;align-items:center;justify-content:center;border:1px solid var(--green);background:var(--green);color:#fff;border-radius:10px;padding:10px 16px;font-weight:600;cursor:pointer;font:inherit;font-weight:600}.btn:hover{background:var(--green2)}
+.btn.block{width:100%}.btn.ghost{background:#fff;color:var(--green2)}.btn.ghost:hover{background:var(--mint)}.btn.sm{padding:5px 12px;font-size:13px;border-radius:9px}.btn.danger{background:#fff;color:var(--red);border-color:#e6c4be}
+.sec{display:flex;justify-content:space-between;align-items:flex-end;margin:28px 0 12px}.sec h2{font-size:25px}
+.step{display:flex;flex-direction:column;gap:6px}.step .ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:18px;margin-bottom:10px}
+.ic.a{background:var(--amber);color:var(--ambtx)}.ic.l{background:var(--lav);color:var(--lavtx)}.ic.g{background:var(--mint);color:var(--green)}
+.step h3{font-size:17px}.step p{color:var(--mute);margin:2px 0 14px;min-height:42px}.link{color:var(--green2);font-weight:600;cursor:pointer;background:none;border:0;padding:0;font:inherit;font-weight:600;text-align:left}.link:hover{text-decoration:underline}.step .links{margin-top:auto;display:flex;gap:16px;flex-wrap:wrap}
+.sumtxt p{margin:6px 0;color:#3b4a4c}.sumtxt .unc{color:var(--mute)}
+.tag{display:inline-block;background:var(--mint);border-radius:7px;padding:3px 9px;font-size:12px;color:#44584e;margin:3px 5px 3px 0}.tag.eng{background:var(--lav);color:var(--lavtx)}.tag.warn{background:var(--amber);color:var(--ambtx)}
+.ev{display:inline-block;margin:2px 4px 2px 0;padding:1px 8px;border-radius:6px;background:#f3f5f1;border:1px solid var(--line);font:11.5px ui-monospace,Consolas,monospace;cursor:pointer;color:#44584e}.ev:hover{background:var(--mint)}
+.rec{display:flex;gap:12px;padding:14px 0;border-top:1px solid var(--line)}.rec:first-of-type{border-top:0}.rec .d{width:10px;height:10px;border-radius:50%;background:#7aa58b;margin-top:6px;flex:none}.rec.hl{background:var(--amber);border-radius:10px;padding-left:8px}
+.rec b{display:block}.rec .tm{margin-left:auto;color:var(--mute);font-size:12.5px;white-space:nowrap}.rec p{margin:2px 0 6px;color:var(--mute)}
+.row{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line)}.row:first-child{border-top:0}
+.act{border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}.act.pending_approval{border-color:#e4cf9f;background:#fffcf4}.act.sos{border-color:#e6b9b1;background:var(--redbg)}
+.strip{display:flex;gap:14px;align-items:center;border:1px dashed #cfd6cd;border-radius:14px;padding:16px 20px;margin:22px 0;color:var(--mute)}.strip b{color:var(--ink);display:block}.strip .st{font-size:24px;color:var(--green)}
+.foot{text-align:center;color:var(--mute);font-size:12px;margin-top:26px}
+label.f{display:block;font-weight:600;font-size:13px;margin:0 0 6px}.field{margin-bottom:16px}
+input,select,textarea{font:inherit;color:inherit;width:100%;background:#f7f7f4;border:1px solid var(--line);border-radius:10px;padding:11px 14px}input:focus,select:focus{outline:2px solid #b9d3c3;background:#fff}
+input[type=checkbox]{width:auto;accent-color:var(--green)}.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}.hint{font-size:12px;color:var(--mute);margin-top:4px}
+.askrow{display:flex;gap:10px;margin:12px 0 6px}.askrow input{flex:1}
+dialog{border:0;border-radius:18px;padding:24px;width:min(520px,92vw);box-shadow:0 20px 60px rgba(20,35,30,.25);color:var(--ink)}dialog::backdrop{background:rgba(25,40,35,.35)}
+dialog h3{font-size:20px;margin-bottom:14px}.dlgbtns{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--green2);color:#fff;padding:11px 18px;border-radius:12px;box-shadow:var(--shadow);max-width:min(560px,92vw);z-index:9;font-size:13.5px}.toast.bad{background:var(--red)}
+pre{background:#f3f5f1;border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto;max-height:300px;font-size:12px}
+.badge{display:inline-block;font-size:11.5px;border-radius:6px;padding:1px 8px;background:#f1f3ee;border:1px solid var(--line);color:var(--mute)}.hidden{display:none}
+</style></head><body>
+<div class="app">
+<aside>
+ <div class="brand"><div class="logo">&#10035;</div><div><b>LifeLoop</b><small>Care, with context</small></div></div>
+ <div class="resident"><div class="av" id="rAv">M</div><div><b id="rName">Maya</b><small>Resident &middot; Demo household</small></div><span class="dot"></span></div>
+ <nav id="nav"></nav>
+ <div class="humanled"><b>&#9825; Human-led care</b><p>LifeLoop proposes. People decide.</p><span class="pill">&bull; Simulated demo</span></div>
+</aside>
+<div class="main">
+ <div class="top"><div><span class="eyebrow">Household care &middot; Daily briefing</span><h1 id="title"></h1><div class="sub" id="subtitle"></div></div>
+  <div class="tools"><span class="status" id="status">&bull; Connecting&hellip;</span><button class="sosbtn" id="sosBtn" title="Drafts an alert only. Nobody is contacted.">SOS (demo)</button><button class="iconbtn" id="refresh" title="Refresh">&#8635;</button><div class="av sand" id="cgAv" style="width:40px;height:40px">C</div></div></div>
+ <div class="banner"><span>&#9432;</span><span><b>Simulation mode is on.</b> Household activity is sample data. No emergency messages are sent, no orders are placed, and no real devices are connected.</span></div>
+ <div id="page"></div>
+ <div class="foot">LifeLoop AI &middot; Prototype &middot; Simulated data &middot; Human approval required &middot; Not medical advice &middot; v1.1.0</div>
+</div></div>
+<dialog id="dlg"></dialog><div id="toast" class="toast hidden"></div>
+<script>
+const $=id=>document.getElementById(id);
+function h(tag,props={},...kids){const e=document.createElement(tag);for(const[k,v]of Object.entries(props||{})){if(v===false||v==null)continue;if(k==="class")e.className=v;else if(k==="value")e.value=v;else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);else e.setAttribute(k,v===true?"":v)}for(const c of kids.flat(9))if(c!=null&&c!==false)e.append(c.nodeType?c:document.createTextNode(c));return e}
+const fill=(el,...k)=>el.replaceChildren(...k.flat(9).filter(x=>x!=null&&x!==false));
+const fmt=hm=>{if(!hm)return"";let[H,M]=hm.slice(0,5).split(":").map(Number);return`${((H+11)%12)+1}:${String(M).padStart(2,"0")} ${H<12?"AM":"PM"}`};
+function toast(m,bad){const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.className="toast hidden",4500)}
+
+class Mcp{ // real MCP client: initialize -> notifications/initialized -> tools/list -> tools/call
+ constructor(){this.sid=null;this.n=0;this.proto=null;this.traffic=[]}
+ async rpc(method,params,notify=false){const body={jsonrpc:"2.0",method,params};if(!notify)body.id=++this.n;
+  const headers={"Content-Type":"application/json","Accept":"application/json, text/event-stream"};
+  if(this.sid)headers["Mcp-Session-Id"]=this.sid;if(this.proto)headers["MCP-Protocol-Version"]=this.proto;
+  const r=await fetch("/mcp",{method:"POST",headers,body:JSON.stringify(body)});this.sid=r.headers.get("Mcp-Session-Id")||this.sid;
+  const j=notify?null:await r.json();this.traffic.unshift(`-> ${method} ${JSON.stringify(params||{}).slice(0,150)}\n<- ${r.status} ${j?JSON.stringify(j).slice(0,220):""}`);this.traffic=this.traffic.slice(0,14);
+  if(j&&j.error)throw new Error(j.error.message);return j&&j.result}
+ async init(){const r=await this.rpc("initialize",{protocolVersion:"2025-11-25",capabilities:{},clientInfo:{name:"lifeloop-web",version:"1.1.0"}});
+  this.proto=r.protocolVersion;await this.rpc("notifications/initialized",{},true);this.tools=(await this.rpc("tools/list",{})).tools;return r}
+ async call(name,args={}){const r=await this.rpc("tools/call",{name,arguments:args});if(r.isError)throw new Error(r.content[0].text);return r.structuredContent}}
+const mcp=new Mcp();
+const S={tl:null,find:null,set:null,audit:[],sum:null,page:"overview"};
+const NAV=[["overview","Overview","\u2302"],["timeline","Daily timeline","\u25F4"],["review","Review & approve","\u2713"],["settings","Consent & settings","\u2699"],["audit","Evidence & audit","\u2248"]];
+
+async function act(fn,ok){try{const r=await fn();S.sum=null;if(ok)toast(ok===true?r.message:ok);await load();return r}catch(e){toast(e.message,true);return null}}
+async function load(){
+ const [tl,find,set,audit]=await Promise.all([mcp.call("get_timeline"),mcp.call("check_inactivity"),mcp.call("get_settings"),mcp.call("get_audit_log",{limit:50})]);
+ Object.assign(S,{tl,find,set,audit:audit.entries});render()}
+const pending=()=>S.tl.actions.filter(a=>a.status==="pending_approval");
+const el_name=()=>S.set.elder_name, cg_name=()=>S.set.caregiver_name;
+
+function go(p){S.page=p;location.hash=p;render();window.scrollTo(0,0)}
+function render(){
+ if(!S.tl)return;const p=S.page,n=el_name(),c=cg_name();
+ $("rName").textContent=n;$("rAv").textContent=n[0].toUpperCase();$("cgAv").textContent=c[0].toUpperCase();
+ fill($("nav"),NAV.map(([k,l,i])=>h("a",{class:k===p?"on":"",onclick:()=>go(k)},h("i",{},i),l,k==="review"?h("span",{class:"count"+(pending().length?" hot":"")},String(pending().length)):null)));
+ const T={overview:[`Good day, ${c} \u273D`,"A calmer view of what\u2019s known, pending, and what needs a human."],timeline:["Daily timeline","Source-labeled records, not assumptions."],review:["Human review","Proposals stay pending until a person decides."],settings:["Consent & settings","Set household preferences and access boundaries."],audit:["Evidence & audit","Every tool call and decision, in order."]}[p];
+ $("title").textContent=T[0];$("subtitle").textContent=T[1];document.title=`LifeLoop - ${T[0]}`;
+ fill($("page"),{overview,timeline,review,settings,audit}[p]())}
+
+/* ---------- shared pieces ---------- */
+function evChip(id){return h("span",{class:"ev",onclick:()=>showRecord(id)},id)}
+function showRecord(id){const i=S.tl.items.find(x=>x.id===id);
+ openDlg("Record "+id,i?[h("p",{},h("b",{},i.title),h("br"),i.label),h("p",{class:"note"},`${fmt(i.time)} \u00b7 source: ${i.source_key} \u00b7 status: ${i.status}`),i.simulated?h("p",{class:"note"},"Simulated sensor event. No real device is connected."):h("p",{class:"note"},"Reported by a person; not independently verified.")]:[h("p",{},"This record is not in today\u2019s timeline view.")])}
+function openDlg(title,body,buttons){const d=$("dlg");fill(d,h("h3",{},title),body,h("div",{class:"dlgbtns"},...(buttons||[]),h("button",{class:"btn ghost",onclick:()=>d.close()},buttons?"Cancel":"Close")));if(!d.open)d.showModal()}
+function recRow(i,hl){return h("div",{class:"rec"+(hl?" hl":""),"data-id":i.id},h("span",{class:"d"}),h("div",{},h("b",{},i.title),h("p",{},i.label),h("span",{class:"badge"},`${i.source} \u00b7 ${i.status}`)," ",evChip(i.id)),h("span",{class:"tm"},fmt(i.time)))}
+const lastCk=()=>[...S.tl.items].reverse().find(i=>i.type==="checkin");
+
+/* ---------- dialogs ---------- */
+function checkinDlg(){const n=el_name();
+ const sl=h("select",{id:"ds"},...["morning","evening","ad_hoc"].map(x=>h("option",{value:x},x==="ad_hoc"?"Ad hoc":x[0].toUpperCase()+x.slice(1)))),
+  fe=h("select",{id:"df"},h("option",{value:""},"(not stated)"),...["good","okay","unwell","unsure"].map(x=>h("option",{value:x},x))),
+  tx=h("input",{id:"dt",value:"I slept okay, a little tired."}),
+  at=h("select",{},h("option",{value:""},"(not stated)"),h("option",{value:"y"},"Yes"),h("option",{value:"n"},"No")),
+  mt=h("select",{},h("option",{value:""},"(not stated)"),h("option",{value:"y"},"Yes"),h("option",{value:"n"},"No"));
+ openDlg("Record a check-in",[h("div",{class:"two"},h("div",{class:"field"},h("label",{class:"f"},"Slot"),sl),h("div",{class:"field"},h("label",{class:"f"},"Feeling"),fe)),h("div",{class:"field"},h("label",{class:"f"},`What ${n} said`),tx),
+  h("div",{class:"two"},h("div",{class:"field"},h("label",{class:"f"},"Has eaten? (reported)"),at),h("div",{class:"field"},h("label",{class:"f"},"Took medication? (reported)"),mt)),h("p",{class:"note"},"Self-reported \u00b7 not a diagnosis \u00b7 not verified.")],
+  [h("button",{class:"btn",onclick:async()=>{const a={slot:sl.value,response:tx.value};if(fe.value)a.feeling=fe.value;if(at.value)a.ate=at.value==="y";if(mt.value)a.took_meds=mt.value==="y";const ok=await act(()=>mcp.call("record_checkin",a),true);if(ok)$("dlg").close()}},"Save check-in")])}
+function askElder(exp){const n=el_name();
+ openDlg(`Asking ${n}: \u201cHave you had ${exp}?\u201d`,[h("p",{},"In the demo you play the reply. Nothing alarming happens until a person decides."),
+  h("div",{class:"dlgbtns",style:"justify-content:flex-start"},
+   h("button",{class:"btn",onclick:async()=>{if(await act(()=>mcp.call("record_checkin",{slot:"ad_hoc",response:`Yes, I had ${exp}.`,ate:true,feeling:"good"}),"Recorded as reported by "+n+"."))$("dlg").close()}},`${n}: \u201cYes, I ate\u201d`),
+   h("button",{class:"btn ghost",onclick:async()=>{await mcp.call("record_checkin",{slot:"ad_hoc",response:`No, I haven't had ${exp}. I'm hungry.`,ate:false});const m=await act(()=>mcp.call("suggest_meal",{elder_wants_food:true}),true);if(m){$("dlg").close();go("review")}}},`${n}: \u201cNo, I\u2019m hungry\u201d`))],[])}
+function reminderDlg(){const k=h("select",{},...["medication","appointment","routine","meal","water"].map(x=>h("option",{value:x},x))),w=h("input",{type:"datetime-local"}),t=h("input",{placeholder:"e.g. Doctor follow-up"}),v=h("input",{type:"checkbox"});
+ openDlg("Add a reminder",[h("div",{class:"two"},h("div",{class:"field"},h("label",{class:"f"},"Kind"),k),h("div",{class:"field"},h("label",{class:"f"},"When"),w)),h("div",{class:"field"},h("label",{class:"f"},"Title"),t),h("label",{class:"f"},v," Medication instructions are verified by the caregiver"),h("p",{class:"note"},"LifeLoop never generates dosing advice. Delivery is simulated.")],
+  [h("button",{class:"btn",onclick:async()=>{const a={kind:k.value,title:t.value,due_at:w.value};if(k.value==="medication"&&v.checked)a.instructions_source="caregiver_verified";if(await act(()=>mcp.call("schedule_reminder",a),true))$("dlg").close()}},"Schedule")])}
+function medDlg(){const nm=h("input",{placeholder:"Medication name as on the caregiver\u2019s list"}),st=h("select",{},...["reported_taken","reported_skipped","reminder_acknowledged"].map(x=>h("option",{value:x},x.replace(/_/g," ")))),by=h("select",{},h("option",{value:"caregiver"},"caregiver"),h("option",{value:"elder"},"resident")),no=h("input",{});
+ openDlg("Log a medication report",[h("div",{class:"field"},h("label",{class:"f"},"Medication"),nm),h("div",{class:"two"},h("div",{class:"field"},h("label",{class:"f"},"Status"),st),h("div",{class:"field"},h("label",{class:"f"},"Reported by"),by)),h("div",{class:"field"},h("label",{class:"f"},"Note (optional)"),no),h("p",{class:"note"},"This records a report, not proof that a dose was taken.")],
+  [h("button",{class:"btn",onclick:async()=>{const a={name:nm.value,status:st.value,reported_by:by.value};if(no.value)a.note=no.value;if(await act(()=>mcp.call("log_medication",a),true))$("dlg").close()}},"Save report")])}
+async function draftUpdate(){const r=await act(()=>mcp.call("draft_family_alert",{kind:"daily_update"}),"Draft created. Review it in Review & approve.");if(r)go("review")}
+
+/* ---------- pages ---------- */
+function overview(){
+ const n=el_name(),ck=lastCk(),gap=S.find.findings[0],rem=S.tl.reminders;
+ const nextRem=rem.find(r=>!r.ack_at&&r.status!=="acknowledged")||rem[0];
+ const summaryBox=h("div",{id:"sumBox",class:"sumtxt"});drawSummary(summaryBox);
+ const q=h("input",{id:"q",value:`How was ${n}'s day?`,"aria-label":"Ask LifeLoop"});
+ return h("div",{},
+  h("div",{class:"grid g2"},
+   h("div",{class:"card hero"},h("div",{},h("span",{class:"label"},"Today at a glance"),h("h2",{},"Care that connects the little things."),h("p",{},"Evidence first. Gentle follow-ups. Human approval before action.")),h("div",{class:"chips"},h("span",{class:"chip"},"\u2726 Consent-aware"),h("span",{class:"chip"},"\u25C9 Evidence-backed"),h("span",{class:"chip"},"\u2661 Human-led"))),
+   h("div",{class:"card"},h("span",{class:"label"},"Latest check-in"),h("h3",{style:"font-size:19px"},`How is ${n} feeling?`),h("div",{class:"quote"},ck?`\u201c${ck.label}\u201d`:"No check-in recorded yet today."),h("div",{class:"note"},"\u25CF Self-reported \u00b7 not a diagnosis"),h("div",{style:"height:14px"}),h("button",{class:"btn block",onclick:checkinDlg},"Record a check-in \u2197"))),
+  h("div",{class:"sec"},h("div",{},h("span",{class:"label"},"What needs attention"),h("h2",{},"Small next steps")),h("span",{class:"note"},"Updated "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}))),
+  h("div",{class:"grid g3"},
+   h("div",{class:"card step"},h("div",{class:"ic a"},"\u25F4"),h("span",{class:"label"},"Meal check"),h("h3",{},gap?`${gap.expectation[0].toUpperCase()+gap.expectation.slice(1)} isn\u2019t confirmed`:"Meals look covered"),h("p",{},gap?`There\u2019s no ${gap.expectation} record yet. That doesn\u2019t mean ${n} skipped it.`:"No expected-activity gaps right now."),
+     gap?h("div",{class:"links"},h("button",{class:"link",onclick:()=>askElder(gap.expectation)},"Ask & suggest a meal \u2192"),h("button",{class:"link",onclick:()=>act(()=>mcp.call("draft_family_alert",{kind:"inactivity"}),"Alert drafted. Review it first.").then(r=>r&&go("review"))},"Draft alert instead \u2192")):null),
+   h("div",{class:"card step"},h("div",{class:"ic l"},"\u2661"),h("span",{class:"label"},"Family support"),h("h3",{},"Draft an update"),h("p",{},"Prepare a message for family review using specific supporting records."),h("div",{class:"links"},h("button",{class:"link",onclick:draftUpdate},"Draft family update \u2192"))),
+   h("div",{class:"card step"},h("div",{class:"ic g"},"\u2713"),h("span",{class:"label"},"Care routine"),h("h3",{},"Reminder status"),h("p",{},nextRem?(nextRem.ack_at?`${nextRem.title}: acknowledged; completion is not verified.`:`${nextRem.title}: ${nextRem.status.replace(/_/g," ")}, due ${nextRem.due_at.slice(5,16).replace("T"," ")}.`):"No reminders yet."),h("div",{class:"links"},h("button",{class:"link",onclick:()=>go("timeline")},"Log reminder response \u2192")))),
+  h("div",{class:"grid g2b",style:"margin-top:22px"},
+   h("div",{class:"card"},h("div",{style:"display:flex;justify-content:space-between"},h("div",{},h("span",{class:"label"},"Evidence-based briefing"),h("h2",{class:"t"},"Daily summary")),h("button",{class:"btn ghost sm",onclick:()=>runSummary(q)},"Refresh \u21BB")),
+     h("div",{class:"askrow"},q,h("button",{class:"btn sm",onclick:()=>runSummary(q)},"Ask")),summaryBox),
+   h("div",{class:"card"},h("div",{style:"display:flex;justify-content:space-between"},h("div",{},h("span",{class:"label"},"Recent records"),h("h2",{class:"t"},"Household timeline")),h("button",{class:"btn ghost sm",onclick:()=>go("timeline")},"View all \u2192")),h("div",{style:"margin-top:8px"},...S.tl.items.slice().reverse().slice(0,4).map(i=>recRow(i)),S.tl.items.length?null:h("p",{class:"note"},"No records yet.")))),
+  h("div",{class:"strip"},h("span",{class:"st"},"\u273D"),h("div",{},h("b",{},"It asks before it alarms."),"Missing data creates a question, not a conclusion.")))}
+async function runSummary(q){const box=$("sumBox");fill(box,h("p",{class:"note"},"Asking LifeLoop (get_daily_summary over MCP)\u2026"));try{S.sum=await mcp.call("get_daily_summary");drawSummary(box);await refreshAudit()}catch(e){fill(box,h("p",{style:"color:var(--red)"},e.message))}}
+async function refreshAudit(){S.audit=(await mcp.call("get_audit_log",{limit:50})).entries}
+function drawSummary(box){const r=S.sum;if(!r){fill(box,h("p",{class:"note"},"Press Ask or Refresh to run get_daily_summary through the MCP server."));return}
+ fill(box,r.summary.split("\n").map(l=>h("p",{class:l.startsWith("Important")?"unc":""},l)),
+  h("div",{style:"margin-top:10px"},r.sources.map(s=>h("span",{class:"tag"},s[0].toUpperCase()+s.slice(1))),h("span",{class:"tag eng",title:r.fallback_reason||""},r.summary_source==="bedrock"?`Engine: Amazon Bedrock (${r.model})`:"Engine: local_evidence_summary (Bedrock not used)")),
+  h("div",{style:"margin-top:8px"},h("span",{class:"label"},"Evidence behind this summary"),r.evidence.map(evChip)),
+  h("div",{style:"margin-top:8px"},h("span",{class:"label"},"What remains unknown"),h("ul",{style:"margin:4px 0;padding-left:18px;color:#3b4a4c"},r.unknowns.map(u=>h("li",{},u)))))}
+
+function timeline(){
+ const n=el_name(),rem=S.tl.reminders;
+ return h("div",{class:"grid g2c"},
+  h("div",{class:"card"},h("div",{style:"display:flex;justify-content:space-between"},h("div",{},h("span",{class:"label"},"Source-labeled records"),h("h2",{class:"t"},"Daily timeline")),h("button",{class:"btn ghost sm",onclick:()=>act(async()=>{})},"Refresh \u21BB")),
+   h("div",{style:"margin-top:8px"},S.tl.items.slice().reverse().map(i=>recRow(i)),S.tl.items.length?null:h("p",{class:"note"},"No records yet."))),
+  h("div",{class:"card",id:"reminders"},h("span",{class:"label"},"Care routine"),h("h2",{class:"t"},"Reminders"),
+   h("div",{style:"margin-top:8px"},rem.map(r=>h("div",{class:"row"},h("div",{},h("b",{},r.title),h("div",{class:"note"},`${r.kind} \u00b7 ${r.due_at.slice(0,16).replace("T"," ")} \u00b7 ${r.status.replace(/_/g," ")}${r.instructions_source==="caregiver_verified"?" \u00b7 caregiver-verified":""}`)),
+     r.ack_at?h("span",{class:"badge"},"acknowledged \u00b7 not verified done"):h("button",{class:"btn ghost sm",onclick:()=>act(()=>mcp.call("acknowledge_reminder",{reminder_id:r.id}),true)},"Log response")))),
+   h("div",{style:"display:flex;gap:10px;margin-top:14px;flex-wrap:wrap"},h("button",{class:"btn sm",onclick:reminderDlg},"Add a reminder"),h("button",{class:"btn ghost sm",onclick:medDlg},"Log medication report")),
+   h("p",{class:"note",style:"margin-top:12px"},"Acknowledgements and reports are recorded separately from verified completion.")))}
+
+function review(){
+ const pend=pending(),done=S.tl.actions.filter(a=>a.status!=="pending_approval");
+ const card=x=>{const p=x.payload,open=x.status==="pending_approval";
+  return h("div",{class:`act ${x.status} ${x.kind==="sos"?"sos":""}`},
+   h("div",{style:"display:flex;justify-content:space-between;gap:10px"},h("b",{},x.type==="meal_suggestion"?"Meal suggestion":x.kind==="daily_update"?"Daily update for family":x.kind==="sos"?"SOS draft (demo)":`Family alert: ${x.kind.replace(/_/g," ")}`),h("span",{class:"badge"},x.status.replace(/_/g," "))),
+   x.type==="meal_suggestion"?h("p",{},`Recommended: ${p.recommended.meal}, about \u20B9${p.recommended.estimated_cost_inr} (estimate). Other options: ${p.options.slice(1).map(o=>o.meal).join(", ")||"none"}.`)
+    :h("p",{},h("span",{class:"note"},"To: "+p.recipients.join(", ")),h("br"),`\u201c${p.message}\u201d`,p.quiet_hours_hold?h("span",{class:"note"},h("br"),"Non-urgent: would wait until quiet hours end."):null),
+   h("div",{class:"note"},"Evidence: ",x.evidence.length?x.evidence.slice(0,12).map(evChip):"none recorded"),
+   open?h("div",{style:"display:flex;gap:10px;margin-top:12px"},h("button",{class:"btn sm",onclick:()=>act(()=>mcp.call("approve_alert",{action_id:x.id,decision:"approve"}),true)},"Approve (demo)"),h("button",{class:"btn danger sm",onclick:()=>act(()=>mcp.call("approve_alert",{action_id:x.id,decision:"reject"}),true)},"Reject"))
+   :h("p",{class:"note",style:"margin:10px 0 0"},x.status==="approved_demo_only"?(x.type==="family_alert"?"Approved. Delivery simulated: no message was sent."+(x.kind==="sos"?" No emergency services were contacted.":""):"Approved. No order was placed (demo)."):"Rejected. No action taken."))};
+ return h("div",{},h("div",{class:"card"},h("div",{style:"display:flex;justify-content:space-between"},h("div",{},h("span",{class:"label"},"Human in the loop"),h("h2",{class:"t"},"Review & approve")),h("span",{class:"note"},"Nothing happens without a decision")),
+   h("div",{style:"margin-top:14px"},pend.length?pend.map(card):[h("b",{style:"font-size:17px"},"All caught up"),h("p",{class:"note"},"No proposals are waiting for review.")])),
+  done.length?h("div",{class:"card",style:"margin-top:18px"},h("span",{class:"label"},"Decision history"),h("div",{style:"margin-top:10px"},done.map(card))):null)}
+
+function settings(){
+ const s=S.set,F=(id,l,v,t="text",extra={})=>h("div",{class:"field"},h("label",{class:"f"},l),h("input",{id,type:t,value:v,...extra}));
+ const pref=h("select",{id:"sp"},...[["important_only","Important items only"],["all","All items"],["none","SOS and daily updates only"]].map(([v,l])=>h("option",{value:v},l)));pref.value=s.notification_pref;
+ return h("div",{class:"card",style:"max-width:820px"},h("span",{class:"label"},"Boundaries & permissions"),h("h2",{class:"t",style:"margin-bottom:18px"},"Consent & settings"),
+  h("div",{class:"two"},F("sr","Resident name",s.elder_name),F("sc","Caregiver name",s.caregiver_name),F("sm","Morning check-in",s.checkin_times.morning,"time"),F("se","Evening check-in",s.checkin_times.evening,"time"),F("qs","Quiet hours start",s.quiet_hours.start,"time"),F("qe","Quiet hours end",s.quiet_hours.end,"time")),
+  h("div",{class:"field"},h("label",{class:"f"},"Authorized access (demo)"),...s.contacts.map((c,i)=>h("div",{class:"row"},h("b",{},c.name),h("div",{style:"display:flex;gap:16px"},h("label",{},h("input",{type:"checkbox",id:`ca${i}`,checked:c.alerts})," receives alerts"),h("label",{},h("input",{type:"checkbox",id:`cv${i}`,checked:c.view_summary})," receives summaries")))),h("div",{class:"hint"},"Only contacts ticked here can appear as recipients of a draft.")),
+  h("div",{class:"field"},h("label",{class:"f"},"Notification preference"),pref,h("div",{class:"hint"},"Quiet hours hold non-urgent drafts; SOS and daily updates are not held.")),
+  h("div",{class:"field"},h("label",{class:"f"},h("input",{type:"checkbox",id:"cc",checked:s.care_consent})," Care coordination consent enabled"),h("div",{class:"hint"},"This demo preference does not grant access to external services. When off, only SOS drafts are possible.")),
+  h("button",{class:"btn",onclick:async()=>{const g=i=>$(i).value;await act(()=>mcp.call("update_settings",{elder_name:g("sr"),caregiver_name:g("sc"),checkin_times:{morning:g("sm"),evening:g("se")},quiet_hours:{start:g("qs"),end:g("qe")},notification_pref:g("sp"),care_consent:$("cc").checked,contacts:s.contacts.map((c,i)=>({name:c.name,alerts:$(`ca${i}`).checked,view_summary:$(`cv${i}`).checked}))}),"Preferences saved.")}},"Save preferences \u2192"))}
+
+function audit(){
+ return h("div",{class:"grid g2c"},
+  h("div",{class:"card"},h("span",{class:"label"},"Every tool call"),h("h2",{class:"t"},"Audit log"),h("div",{style:"margin-top:8px"},S.audit.map(e=>h("div",{class:"row"},h("div",{},h("b",{},e.tool),h("div",{class:"note"},`${e.ts.slice(0,19).replace("T"," ")} \u00b7 ${e.actor} \u00b7 ${e.summary||""}`)),h("span",{class:"badge",style:e.ok?"":"color:var(--red)"},e.ok?"ok":"refused"))))),
+  h("div",{},h("div",{class:"card"},h("span",{class:"label"},"Live protocol"),h("h2",{class:"t"},"MCP traffic"),h("p",{class:"note"},`Session ${mcp.sid?mcp.sid.slice(0,8):"-"} \u00b7 protocol ${mcp.proto}`),h("pre",{},mcp.traffic.join("\n\n")||"No traffic yet.")),
+   h("div",{class:"card",style:"margin-top:18px"},h("span",{class:"label"},"Discovered by tools/list"),h("h2",{class:"t"},`${mcp.tools.length} MCP tools`),h("div",{style:"margin-top:8px"},mcp.tools.map(t=>h("span",{class:"tag",title:t.description},t.name))))))}
+
+/* ---------- boot ---------- */
+$("sosBtn").onclick=()=>openDlg("SOS (demo)",[h("p",{},"This drafts an urgent family alert for your approval."),h("p",{class:"note"},"No emergency services are contacted and nobody is notified. The real status is shown on the Review page.")],
+ [h("button",{class:"btn danger",onclick:async()=>{const r=await act(()=>mcp.call("draft_family_alert",{kind:"sos"}),true);if(r){$("dlg").close();go("review")}}},"Draft SOS alert")]);
+$("refresh").onclick=()=>act(async()=>{},"Refreshed.");
+(async()=>{const st=$("status");try{const r=await mcp.init();st.textContent=`\u25CF MCP live \u00b7 ${r.protocolVersion} \u00b7 ${mcp.tools.length} tools`;
+ const hp=location.hash.slice(1);if(NAV.some(x=>x[0]===hp))S.page=hp;await load()}catch(e){st.textContent="MCP connection failed: "+e.message;st.className="status bad"}})();
+window.addEventListener("hashchange",()=>{const hp=location.hash.slice(1);if(NAV.some(x=>x[0]===hp)&&hp!==S.page){S.page=hp;render()}});
+</script></body></html>
